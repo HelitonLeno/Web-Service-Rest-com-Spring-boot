@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("students")
@@ -41,15 +42,11 @@ public class StudentEndpoint {
     }
 
     @PostMapping
-    @Transactional(rollbackOn= Exception.class)
-    public ResponseEntity<?> save(@RequestBody Student student) {
-        studentDAO.save(student);
-        studentDAO.save(student);
+//    @Transactional(rollbackOn = Exception.class)
+    public ResponseEntity<?> save(@Valid @RequestBody Student student) {
 
         /*if (true)
             throw new RuntimeException("Test transaction");*/
-
-        studentDAO.save(student);
         return new ResponseEntity<>(studentDAO.save(student), HttpStatus.OK);
     }
 
