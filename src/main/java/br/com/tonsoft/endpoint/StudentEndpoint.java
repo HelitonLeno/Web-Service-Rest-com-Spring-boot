@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+
 @RestController
 @RequestMapping("students")
 public class StudentEndpoint {
@@ -39,7 +41,15 @@ public class StudentEndpoint {
     }
 
     @PostMapping
+    @Transactional(rollbackOn= Exception.class)
     public ResponseEntity<?> save(@RequestBody Student student) {
+        studentDAO.save(student);
+        studentDAO.save(student);
+
+        /*if (true)
+            throw new RuntimeException("Test transaction");*/
+
+        studentDAO.save(student);
         return new ResponseEntity<>(studentDAO.save(student), HttpStatus.OK);
     }
 
@@ -57,7 +67,7 @@ public class StudentEndpoint {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void verifyIfStudentExists(Long id){
+    private void verifyIfStudentExists(Long id) {
         if (studentDAO.findOne(id) == null)
             throw new ResourceNotFoundException("Student not found for id = " + id);
     }
